@@ -1,13 +1,16 @@
 const express = require("express");
 const cors = require("cors");
+const resumeRoutes = require("./routes/resumeRoutes");
 
 const app = express();
 
-// middleware
+//middlewear
 app.use(cors());
 app.use(express.json());
 
-// test route
+app.use("/api/resume",resumeRoutes);
+
+//route
 app.get("/", (req, res) => {
   res.send("Resume Analyzer API running");
 });
