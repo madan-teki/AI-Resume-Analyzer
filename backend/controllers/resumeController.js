@@ -2,8 +2,7 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const pdfjs = require("pdfjs-dist/legacy/build/pdf.mjs");
-
-
+const { analyzeResume } = require("../services/resumeAnalyzer");
 
 // storage configuration
 const storage = multer.diskStorage({
@@ -49,13 +48,16 @@ const uploadResume = async (req, res) => {
       const strings = content.items.map(item => item.str);
       text += strings.join(" ") + "\n";
     }
+    
+    const analysis = analyzeResume(text);
 
     res.json({
-      message: "Resume uploaded & parsed",
-      filename: req.file.filename,
-      text,
+    message: "Resume uploaded & analyzed",
+    filename: req.file.filename,
+    analysis,
     });
-  } catch (err) {
+
+     } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
