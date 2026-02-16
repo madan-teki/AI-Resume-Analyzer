@@ -1,7 +1,11 @@
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs");
+const pdfjs = require("pdfjs-dist/legacy/build/pdf.mjs");
 
-// storage config
+
+
+// storage configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/");
@@ -26,15 +30,35 @@ const upload = multer({
   fileFilter,
 });
 
-const uploadResume = (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ message: "No file uploaded" });
-  }
+const uploadResume = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
 
-  res.json({
-    message: "Resume uploaded successfully",
-    file: req.file.filename,
-  });
+    const filePath = path.join(__dirname, "..", "uploads", req.file.filename);
+    const dataBuffer = new Uint8Array(fs.readFileSync(filePath));
+    const loadingTask = pdfjs.getDocument({ data: dataBuffer });
+    const pdf = await loadingTask.promise;
+
+    let text = "";
+
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      const strings = content.items.map(item => item.str);
+      text += strings.join(" ") + "\n";
+    }
+
+    res.json({
+      message: "Resume uploaded & parsed",
+      filename: req.file.filename,
+      text,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
 module.exports = { upload, uploadResume };
+
