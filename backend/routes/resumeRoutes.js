@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
-const { uploadResume } = require("../controllers/resumeController");
+const { upload, uploadResume } = require("../controllers/resumeController");
 
-router.post("/upload", uploadResume);
+router.post("/upload", upload.single("resume"), uploadResume);
 
 module.exports = router;
