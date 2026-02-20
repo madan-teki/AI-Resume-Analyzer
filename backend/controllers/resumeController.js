@@ -3,6 +3,8 @@ const path = require("path");
 const fs = require("fs");
 const pdfjs = require("pdfjs-dist/legacy/build/pdf.mjs");
 const { analyzeResume } = require("../services/resumeAnalyzer");
+const Resume = require("../models/Resume");
+
 
 // storage configuration
 const storage = multer.diskStorage({
@@ -29,6 +31,7 @@ const upload = multer({
   fileFilter,
 });
 
+
 const uploadResume = async (req, res) => {
   try {
     if (!req.file) {
@@ -36,8 +39,11 @@ const uploadResume = async (req, res) => {
     }
 
     const filePath = path.join(__dirname, "..", "uploads", req.file.filename);
-    const dataBuffer = new Uint8Array(fs.readFileSync(filePath));
-    const loadingTask = pdfjs.getDocument({ data: dataBuffer });
+
+    const dataBuffer = fs.readFileSync(filePath);
+
+    //extract text from PDF 
+    const loadingTask = pdfjs.getDocument({ data: new Uint8Array(dataBuffer) });
     const pdf = await loadingTask.promise;
 
     let text = "";
@@ -48,19 +54,40 @@ const uploadResume = async (req, res) => {
       const strings = content.items.map(item => item.str);
       text += strings.join(" ") + "\n";
     }
-    
-    const analysis = analyzeResume(text);
 
-    res.json({
-    message: "Resume uploaded & analyzed",
-    filename: req.file.filename,
-    analysis,
+    //AI analysis
+    const analysis = await analyzeResume(text);
+
+    //save to MongoDB
+    const savedResume = await Resume.create({
+      filename: req.file.filename,
+      originalName: req.file.originalname,
+      text,
+      analysis,
     });
 
-     } catch (err) {
+    res.json({
+      message: "Resume uploaded, analyzed & saved",
+      data: savedResume,
+    });
+  } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-module.exports = { upload, uploadResume };
+//to get resumes
+const getResumes = async (req, res) => {
+  try {
+    const resumes = await Resume.find().sort({ createdAt: -1 });
+
+    res.json({
+      count: resumes.length,
+      resumes,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = { upload, uploadResume, getResumes };
 

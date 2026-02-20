@@ -1,8 +1,11 @@
 const express = require("express");
 const cors = require("cors");
 const resumeRoutes = require("./routes/resumeRoutes");
+const connectDB = require("./config/db");
+require("dotenv").config();
 
 const app = express();
+connectDB();
 
 //middlewear
 app.use(cors());
