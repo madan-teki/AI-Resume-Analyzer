@@ -4,7 +4,7 @@ const fs = require("fs");
 const pdfjs = require("pdfjs-dist/legacy/build/pdf.mjs");
 const { analyzeResume } = require("../services/resumeAnalyzer");
 const Resume = require("../models/Resume");
-
+const { generateSummary } = require("../services/aiService");
 
 // storage configuration
 const storage = multer.diskStorage({
@@ -56,7 +56,10 @@ const uploadResume = async (req, res) => {
     }
 
     //AI analysis
-    const analysis = await analyzeResume(text);
+    const analysis = analyzeResume(text);
+ 
+    const summary = await generateSummary(text);
+     analysis.summary = summary;
 
     //save to MongoDB
     const savedResume = await Resume.create({
