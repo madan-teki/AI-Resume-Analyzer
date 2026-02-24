@@ -1,5 +1,13 @@
 import { useState } from "react";
 
+const card = {
+  background: "#fff",
+  padding: 20,
+  borderRadius: 10,
+  boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+  marginBottom: 30
+};
+
 function UploadResume() {
   const [file, setFile] = useState(null);
   const [response, setResponse] = useState(null);
@@ -29,7 +37,9 @@ function UploadResume() {
   };
 
   return (
-    <div style={{ marginTop: 30 }}>
+    <div style={card}>
+      <h2>AI Resume Analysis</h2>
+
       <input
         type="file"
         accept=".pdf"
@@ -56,7 +66,6 @@ function UploadResume() {
         </div>
       )}
 
-
       {response && (
         <div style={{ marginTop: 20 }}>
           <h3>Server Response</h3>
@@ -66,7 +75,5 @@ function UploadResume() {
     </div>
   );
 }
-
-
 
 export default UploadResume;

@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const resumeRoutes = require("./routes/resumeRoutes");
 const connectDB = require("./config/db");
+const matchRoutes = require("./routes/matchRoutes");
 
 
 const app = express();
@@ -13,6 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/resume",resumeRoutes);
+app.use("/api",matchRoutes);
 
 //route
 app.get("/", (req, res) => {

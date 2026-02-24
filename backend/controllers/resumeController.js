@@ -1,7 +1,7 @@
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
-const pdfjs = require("pdfjs-dist/legacy/build/pdf.mjs");
+const pdfjs = require("pdfjs-dist/legacy/build/pdf.js");
 const { analyzeResume } = require("../services/resumeAnalyzer");
 const Resume = require("../models/Resume");
 const { generateSummary } = require("../services/aiService");
