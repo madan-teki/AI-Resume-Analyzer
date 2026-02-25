@@ -35,7 +35,7 @@ function JDMatcher() {
 
   return (
     <div>
-      <h2>📊 JD Compatibility Check</h2>
+      <h2> JD Compatibility Check</h2>
 
       <div style={{ marginTop: 10 }}>
         <label>Upload Resume: </label>

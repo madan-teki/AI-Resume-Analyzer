@@ -1,5 +1,7 @@
 import UploadResume from "./components/UploadResume";
 import JDMatcher from "./components/JDMatcher";
+import History from "./components/History";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 
 const container = {
   maxWidth: 900,
@@ -17,19 +19,47 @@ const card = {
 
 function App() {
   return (
-    <div style={container}>
-      <h1>AI Resume Analyzer</h1>
+    <BrowserRouter>
+      <div style={container}>
+        <h1>AI Resume Analyzer</h1>
 
-      {/* Section 1 */}
-      <div style={card}>
-        <UploadResume />
-      </div>
+        {/* Navigation */}
+        <nav style={{ marginBottom: 20 }}>
+          <Link to="/" style={{ marginRight: 15 }}>Resume ATS Score Analysis</Link>
+          <Link to="/matcher" style={{ marginRight: 15 }}>JD Compatibility</Link>
+          <Link to="/history">History</Link>
+        </nav>
 
-      {/* Section 2 */}
-      <div style={card}>
-        <JDMatcher />
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <div style={card}>
+                <UploadResume />
+              </div>
+            }
+          />
+
+          <Route
+            path="/matcher"
+            element={
+              <div style={card}>
+                <JDMatcher />
+              </div>
+            }
+          />
+
+          <Route
+            path="/history"
+            element={
+              <div style={card}>
+                <History />
+              </div>
+            }
+          />
+        </Routes>
       </div>
-    </div>
+    </BrowserRouter>
   );
 }
 
